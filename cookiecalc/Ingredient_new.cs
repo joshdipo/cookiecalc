@@ -14,7 +14,7 @@ namespace cookiecalc.second
     {
         public Ingredient Ingredient { get; set; }
         public object Unit { get; set; }
-        public double Amount; // Always in Grams for simplicity
+        public double Amount; // Always in grams for simplicity
 
         public Measurement(Ingredient ingredient, object unit, double amount)
         {
@@ -22,59 +22,6 @@ namespace cookiecalc.second
             Unit = unit;
             SetAmount(amount); // Use SetAmount() method to convert using input unit and set the amount field
         }
-
-
-
-        // Units and conversion mappings
-        private static readonly Dictionary<string, double> MetricWeight =
-            new()
-            {
-                { "Gram", 1 },
-                { "Kilogram", 1000 }
-            };
-        
-        private readonly struct MetricWeight
-        {
-            // unit dicts?
-
-
-            // bool functions?
-
-
-            // conversion factor mappings?
-        }
-
-        // Conversion mappings
-        private static double GetConversionToGrams(this MetricWeightUnit unit)
-        private static readonly Dictionary<MetricWeightUnit, double> MetricWeightToG =
-            new()
-            {
-                { MetricWeightUnit.Gram, 1 },
-                { MetricWeightUnit.Kilogram, 1000 }
-            };
-        private static readonly Dictionary<MetricVolumeUnit, double> MetricVolumeToMl =
-            new()
-            {
-                { MetricVolumeUnit.Milliliter, 1 },
-                { MetricVolumeUnit.Liter, 1000 }
-            };
-        private static readonly Dictionary<ImperialWeightUnit, double> ImperialWeightToG =
-            new()
-            {
-                { ImperialWeightUnit.Ounce, 28.3495 },
-                { ImperialWeightUnit.Pound, 453.592 }
-            };
-        private static readonly Dictionary<ImperialVolumeUnit, double> ImperialVolumeToMl =
-            new()
-            {
-                { ImperialVolumeUnit.Teaspoon, 4.92892 },
-                { ImperialVolumeUnit.Tablespoon, 14.7868 },
-                { ImperialVolumeUnit.Cup, 236.588 },
-                { ImperialVolumeUnit.Pint, 473.176 },
-                { ImperialVolumeUnit.Quart, 946.353 },
-                { ImperialVolumeUnit.Gallon, 3785.41 }
-            };
-
 
 
 
@@ -100,31 +47,31 @@ namespace cookiecalc.second
         {
             if (IsMetric() && IsWeight())
             {
-                var conv = MetricWeightToG[(MetricWeightUnit)Unit]; // Get amount of target Unit in Grams
-                var convertedAmount = Amount / conv; // Convert from Grams to target Unit by dividing by conversion factor
+                var conv = ((MetricWeightUnit)Unit).GetConversionToGrams(); // Uses unit extension method to get amount of target unit in grams
+                var convertedAmount = Amount / conv; // Convert from grams to target unit by dividing by conversion factor
                 return convertedAmount;
             }
 
             if (IsMetric() && IsVolume())
             {
-                var conv = MetricVolumeToMl[(MetricVolumeUnit)Unit]; // Get amount of target Unit in Grams
-                var convertedAmount = Amount / conv; // Convert from Grams to target Unit by dividing by conversion factor
-                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from Grams to target volume Unit by dividing by conversion factor and adjusting for density
+                var conv = ((MetricVolumeUnit)Unit).GetConversionToMl(); // Get amount of target unit in millilitres
+                var convertedAmount = Amount / conv; // Convert from millitres to target unit by dividing by conversion factor (at this point this is the amount in grams as volume assuming the density of water; 1g = 1ml)
+                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from water to target ingredient by adjusting for density
                 return convertedAmount;
             }
 
             if (IsImperial() && IsWeight())
             {
-                var conv = ImperialWeightToG[(ImperialWeightUnit)Unit]; // Get amount of target Unit in Grams
-                var convertedAmount = Amount / conv; // Convert from Grams to target Unit by dividing by conversion factor
+                var conv = ((ImperialWeightUnit)Unit).GetConversionToGrams(); // Get amount of target unit in grams
+                var convertedAmount = Amount / conv; // Convert from grams to target unit by dividing by conversion factor
                 return convertedAmount;
             }
 
             if (IsImperial() && IsVolume())
             {
-                var conv = ImperialVolumeToMl[(ImperialVolumeUnit)Unit]; // Get amount of target Unit in Grams
-                var convertedAmount = Amount / conv; // Convert from Grams to target Unit by dividing by conversion factor
-                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from Grams to target volume Unit by dividing by conversion factor and adjusting for density
+                var conv = ((ImperialVolumeUnit)Unit).GetConversionToMl(); // Get amount of target unit in millilitres
+                var convertedAmount = Amount / conv; // Convert from millitres to target unit by dividing by conversion factor (at this point this is the amount in grams as volume assuming the density of water; 1g = 1ml)
+                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from water to target ingredient by adjusting for density
                 return convertedAmount;
             }
 
@@ -136,7 +83,7 @@ namespace cookiecalc.second
         {
             if (IsMetric() && IsWeight())
             {
-                var conv = MetricWeightToG[(MetricWeightUnit)Unit];
+                var conv = ((MetricWeightUnit)Unit).GetConversionToGrams();
                 var convertedAmount = _amount * conv;
                 Amount = convertedAmount;
                 // return $"Amount set to: {convertedAmount} {Unit}";
@@ -144,22 +91,22 @@ namespace cookiecalc.second
 
             if (IsMetric() && IsVolume())
             {
-                var conv = MetricVolumeToMl[(MetricVolumeUnit)Unit];
+                var conv = ((MetricVolumeUnit)Unit).GetConversionToMl();
                 var convertedAmount = _amount * conv;
                 convertedAmount = convertedAmount * double.Parse(Ingredient.Density);
                 Amount = convertedAmount;
             }
 
-                        if (IsImperial() && IsWeight())
+            if (IsImperial() && IsWeight())
             {
-                var conv = ImperialWeightToG[(ImperialWeightUnit)Unit];
+                var conv = ((ImperialWeightUnit)Unit).GetConversionToGrams();
                 var convertedAmount = _amount * conv;
                 Amount = convertedAmount;
             }
 
             if (IsImperial() && IsVolume())
             {
-                var conv = ImperialVolumeToMl[(ImperialVolumeUnit)Unit];
+                var conv = ((ImperialVolumeUnit)Unit).GetConversionToMl();
                 var convertedAmount = _amount * conv;
                 convertedAmount = convertedAmount * double.Parse(Ingredient.Density);
                 Amount = convertedAmount;
