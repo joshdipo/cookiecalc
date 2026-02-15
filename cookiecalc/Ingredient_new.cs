@@ -6,7 +6,14 @@ namespace cookiecalc.second
     {
         public string Name { get; set; }
         public string Category { get; set; }
-        public string Density { get; set; }
+        public double Density { get; set; }
+
+        public Ingredient(string name, string category, double density)
+        {
+            Name = name;
+            Category = category;
+            Density = density;
+        }
     }
 
 
@@ -56,7 +63,7 @@ namespace cookiecalc.second
             {
                 var conv = ((MetricVolumeUnit)Unit).GetConversionToMl(); // Get amount of target unit in millilitres
                 var convertedAmount = Amount / conv; // Convert from millitres to target unit by dividing by conversion factor (at this point this is the amount in grams as volume assuming the density of water; 1g = 1ml)
-                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from water to target ingredient by adjusting for density
+                convertedAmount = convertedAmount / Ingredient.Density; // Convert from water to target ingredient by adjusting for density
                 return convertedAmount;
             }
 
@@ -71,7 +78,7 @@ namespace cookiecalc.second
             {
                 var conv = ((ImperialVolumeUnit)Unit).GetConversionToMl(); // Get amount of target unit in millilitres
                 var convertedAmount = Amount / conv; // Convert from millitres to target unit by dividing by conversion factor (at this point this is the amount in grams as volume assuming the density of water; 1g = 1ml)
-                convertedAmount = convertedAmount / double.Parse(Ingredient.Density); // Convert from water to target ingredient by adjusting for density
+                convertedAmount = convertedAmount / Ingredient.Density; // Convert from water to target ingredient by adjusting for density
                 return convertedAmount;
             }
 
@@ -93,7 +100,7 @@ namespace cookiecalc.second
             {
                 var conv = ((MetricVolumeUnit)Unit).GetConversionToMl();
                 var convertedAmount = _amount * conv;
-                convertedAmount = convertedAmount * double.Parse(Ingredient.Density);
+                convertedAmount = convertedAmount * Ingredient.Density;
                 Amount = convertedAmount;
             }
 
@@ -108,7 +115,7 @@ namespace cookiecalc.second
             {
                 var conv = ((ImperialVolumeUnit)Unit).GetConversionToMl();
                 var convertedAmount = _amount * conv;
-                convertedAmount = convertedAmount * double.Parse(Ingredient.Density);
+                convertedAmount = convertedAmount * Ingredient.Density;
                 Amount = convertedAmount;
             }
 
