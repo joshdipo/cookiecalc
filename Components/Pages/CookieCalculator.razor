@@ -1,0 +1,61 @@
+@page "/cookiecalc"
+@rendermode InteractiveServer
+@using cookiecalc.MyMCookie
+@using Microsoft.AspNetCore.Components.Web
+
+<PageTitle>Cookie Calc</PageTitle>
+
+<div class="container">
+    <h1>Recipe Creator</h1>
+    <p class="text-muted">Use this to create and store different recipes!</p>
+
+
+    <MudPaper Width="100%">
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <MudStack Spacing="4">
+                <SectionOutlet SectionName="debug" />
+                <SectionOutlet SectionName="tabs" />
+            </MudStack>
+        </MudContainer>
+    </MudPaper>
+
+
+
+</div>
+
+
+
+
+<!-- Debug -->
+<SectionContent SectionName="debug">
+    <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Elevation="6">
+        <strong>DEBUG:</strong> @debugMessage
+    </MudAlert>
+</SectionContent>
+
+<!-- Tabs -->
+<SectionContent SectionName="tabs">
+    <MudTabs Outlined="true" Elevation="4" Rounded="true">
+        <MudTabPanel Text="Ingredients">
+            <SectionOutlet SectionName="ingredients-tab" />
+        </MudTabPanel>
+        <MudTabPanel Text="Recipes" Icon="Icons.Material.Filled.MenuBook">
+            <SectionOutlet SectionName="recipes-tab" />
+        </MudTabPanel>
+    </MudTabs>
+</SectionContent>
+
+
+<!-- Ingredients Panel -->
+<SectionContent SectionName="ingredients-tab">
+    <MudPaper Class="pa-16 ma-2" Outlined="true">thing</MudPaper>
+</SectionContent>
+
+<!-- Recipe Panel -->
+<SectionContent SectionName="recipes-tab">
+    <MudPaper Class="pa-16 ma-2" Outlined="true">thing2</MudPaper>
+</SectionContent>
+
+@code {
+    private string debugMessage = "";
+}
