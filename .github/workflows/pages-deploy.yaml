@@ -1,0 +1,40 @@
+name: GitHub Pages Deploy
+
+on:
+  schedule:
+    - cron: '0 1 * * *' # Every day at 1 am
+  push:
+    branches:
+      - main
+      - dev/**
+  workflow_dispatch:
+    inputs:
+      releaseToPages:
+        description: 'Publish release to pages? (Y/N)'
+        default: 'N'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@4
+        with:
+          dotnet-version: 10.0.x
+      
+      - name: Publish
+        run: dotnet publish -c Release -o release
+      
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./release/wwwroot
+      
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
