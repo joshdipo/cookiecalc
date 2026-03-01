@@ -1,0 +1,70 @@
+@page "/cookiecalc"
+@rendermode InteractiveServer
+@using cookiecalc.MyMCookie
+@using Microsoft.AspNetCore.Components.Web
+
+<PageTitle>Cookie Calc</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudStack Spacing="4">
+        <div>
+            <h1>Recipe Creator</h1>
+            <p class="text-muted">Use this to create and store different recipes!</p>
+        </div>
+        <SectionOutlet SectionName="debug" />
+        <SectionOutlet SectionName="tabs" />
+    </MudStack>
+</MudContainer>
+
+
+
+
+<!-- Debug -->
+<SectionContent SectionName="debug">
+    <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Elevation="4">
+        <strong>DEBUG:</strong> @debugMessage
+    </MudAlert>
+</SectionContent>
+
+<!-- Tabs -->
+<SectionContent SectionName="tabs">
+    <MudTabs Outlined="true" Elevation="0" Rounded="true" Border="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6">
+        <MudTabPanel Text="Ingredients">
+            <SectionOutlet SectionName="ingredients-tab" />
+        </MudTabPanel>
+        <MudTabPanel Text="Recipes" Icon="Icons.Material.Filled.MenuBook">
+            <SectionOutlet SectionName="recipes-tab" />
+        </MudTabPanel>
+    </MudTabs>
+</SectionContent>
+
+
+<!-- Ingredients Panel -->
+<SectionContent SectionName="ingredients-tab">
+    <MudPaper Class="pa-4" Outlined="true" Elevation="0">
+        <MudStack Spacing="2">
+            <div>
+                <h3>Add Ingredient</h3>
+                <p class="text-muted">Select an ingredient, amount, and unit to add to your recipe.</p>
+            </div>
+            <!-- Add ingredient form will go here -->
+        </MudStack>
+    </MudPaper>
+</SectionContent>
+
+<!-- Recipe Panel -->
+<SectionContent SectionName="recipes-tab">
+    <MudPaper Class="pa-4" Outlined="true" Elevation="0">
+        <MudStack Spacing="2">
+            <div>
+                <h3>Your Recipes</h3>
+                <p class="text-muted">View and manage your saved recipes.</p>
+            </div>
+            <!-- Recipe list will go here -->
+        </MudStack>
+    </MudPaper>
+</SectionContent>
+
+@code {
+    private string debugMessage = "";
+}
