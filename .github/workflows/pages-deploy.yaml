@@ -11,7 +11,8 @@ on:
     inputs:
       releaseToPages:
         description: 'Publish release to pages? (Y/N)'
-        default: 'N'
+        type: boolean
+        default: false
 
 jobs:
   build:
