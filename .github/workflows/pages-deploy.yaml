@@ -32,7 +32,10 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o release
       
+
+      # only run pages deploy when 'releaseToPages' is true
       - name: Upload pages artifact
+        if: inputs.releaseToPages == true
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./release/wwwroot
