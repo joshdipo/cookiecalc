@@ -35,11 +35,11 @@ jobs:
 
       # only run pages deploy when 'releaseToPages' is true
       - name: Upload pages artifact
-        if: inputs.releaseToPages == true
+        if: inputs.releaseToPages == true || github.ref_name == 'main'
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./release/wwwroot
       
       - name: Deploy to GitHub Pages
-        if: inputs.releaseToPages == true
+        if: inputs.releaseToPages == true || github.ref_name == 'main'
         uses: actions/deploy-pages@v4
