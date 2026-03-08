@@ -11,7 +11,8 @@ on:
     inputs:
       releaseToPages:
         description: 'Publish release to pages? (Y/N)'
-        default: 'N'
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -31,10 +32,14 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o release
       
+
+      # only run pages deploy when 'releaseToPages' is true
       - name: Upload pages artifact
+        if: inputs.releaseToPages == true
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./release/wwwroot
       
       - name: Deploy to GitHub Pages
+        if: inputs.releaseToPages == true
         uses: actions/deploy-pages@v4
