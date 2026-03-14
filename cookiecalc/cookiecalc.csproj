@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    <IndexHtmlSource Condition="'$(Configuration)' == 'Debug'">index.html.dev</IndexHtmlSource>
+    <IndexHtmlSource Condition="'$(Configuration)' == 'Release'">index.html.release</IndexHtmlSource>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,5 +14,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="9.0.0" />
   </ItemGroup>
+
+  <Target Name="SelectIndexHtml" BeforeTargets="Build">
+    <Copy SourceFiles="wwwroot/$(IndexHtmlSource)" DestinationFiles="wwwroot/index.html" />
+  </Target>
 
 </Project>
