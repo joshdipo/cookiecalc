@@ -42,17 +42,41 @@
 <!-- Ingredients Panel -->
 <SectionContent SectionName="ingredients-tab">
     <MudPaper Class="pa-4" Outlined="true" Elevation="0">
-        <MudStack Spacing="2">
+        <MudStack Spacing="4">
             <div>
                 <h3>Add Ingredient</h3>
                 <p class="text-muted">Select an ingredient, amount, and unit to add to your recipe.</p>
             </div>
             <!-- Add ingredient form will go here -->
-            <MudStack Spacing="2" Row="true">
-                <MudTextField @bind-Value="textBoxName" Label="Name" Variant="Variant.Outlined"></MudTextField>
-                <MudTextField @bind-Value="textBoxCategory" Label="Category" Variant="Variant.Outlined"></MudTextField>
-                <MudTextField @bind-Value="textBoxDensity" Label="Density" Variant="Variant.Outlined"></MudTextField>
-            </MudStack>
+            <MudGrid Spacing="1" Class="align-center">
+                <MudItem xs="12" sm="4" md="3">
+                    <MudTextField Immediate="true" @bind-Value="textBoxName" Label="Name" Variant="Variant.Outlined"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4" md="3">
+                    <MudTextField Immediate="true" @bind-Value="textBoxCategory" Label="Category" Variant="Variant.Outlined"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4" md="3">
+                    <MudTextField Immediate="true" @bind-Value="textBoxDensity" Label="Density" Variant="Variant.Outlined"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="3">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ButtonAddIngredient">Add</MudButton>
+                </MudItem>
+            </MudGrid>
+            <!-- Ingredient list -->
+            <MudTable Items="@Ingredients.IngredientList.Values"  Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" SortLabel="Sort By">
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<Ingredient, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<Ingredient, object>(x=>x.Category)">Category</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<Ingredient, object>(x=>x.Density)">Density</MudTableSortLabel></MudTh>
+                    <MudTh>Remove</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                    <MudTd DataLabel="Category">@context.Category</MudTd>
+                    <MudTd DataLabel="Density">@context.Density</MudTd>
+                    <MudTd DataLabel="Remove"><MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" @onclick="@(e => ButtonRemoveIngredient(context.Name))" /></MudTd>
+                </RowTemplate>
+            </MudTable>
         </MudStack>
     </MudPaper>
 </SectionContent>
@@ -74,20 +98,37 @@
     private string debugMessage = "";
 
     // Cookie calc vars
-    private string textBoxName { get; set; }
-    private string textBoxCategory { get; set; }
+    private string textBoxName { get; set; } = "";
+    private string textBoxCategory { get; set; } = "";
     private double textBoxDensity { get; set; }
+
+    @* private string selectedIngredient = ""; *@
+
+
 
     // Functions
 
     // Add Ingredient Button
-    private bool ButtonAddIngredient()
+    public void ButtonAddIngredient()
     {
+        if (!string.IsNullOrEmpty(textBoxName) && !string.IsNullOrEmpty(textBoxCategory))
+        {}
+        try{
         Ingredients.AddIngrdient(
             name:textBoxName,
             category:textBoxCategory,
             density:0.0
         );
-        return true;
+        debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
+        }
+        catch{
+        }
+    }
+
+    // Remove Ingredient Button
+    public void ButtonRemoveIngredient(string name)
+    {
+        Ingredients.RemoveIngredient(name);
+        debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
     }
 }
