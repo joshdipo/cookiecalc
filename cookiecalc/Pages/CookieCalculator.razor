@@ -48,6 +48,11 @@
                 <p class="text-muted">Select an ingredient, amount, and unit to add to your recipe.</p>
             </div>
             <!-- Add ingredient form will go here -->
+            <MudStack Spacing="2" Row="true">
+                <MudTextField @bind-Value="textBoxName" Label="Name" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="textBoxCategory" Label="Category" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="textBoxDensity" Label="Density" Variant="Variant.Outlined"></MudTextField>
+            </MudStack>
         </MudStack>
     </MudPaper>
 </SectionContent>
@@ -67,4 +72,22 @@
 
 @code {
     private string debugMessage = "";
+
+    // Cookie calc vars
+    private string textBoxName { get; set; }
+    private string textBoxCategory { get; set; }
+    private double textBoxDensity { get; set; }
+
+    // Functions
+
+    // Add Ingredient Button
+    private bool ButtonAddIngredient()
+    {
+        Ingredients.AddIngrdient(
+            name:textBoxName,
+            category:textBoxCategory,
+            density:0.0
+        );
+        return true;
+    }
 }
