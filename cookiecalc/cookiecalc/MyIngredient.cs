@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace cookiecalc.MyMCookie
 {
     /// <summary>
@@ -68,19 +70,19 @@ namespace cookiecalc.MyMCookie
         public static void SetIngredient(string name, string category, double density)
         {
             // Prevent invalid inputs
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name) || !Regex.IsMatch(name, @"^\w+(\s\w+)*$"))
             {
-                throw new ArgumentException("Name cannot be empty");
+                throw new ArgumentException("Name is invalid");
             }
-            if (string.IsNullOrEmpty(category))
+            if (string.IsNullOrEmpty(category) || !Regex.IsMatch(category, @"^\w+(\s\w+)*$"))
             {
-                throw new ArgumentException("Category cannot be empty");
+                throw new ArgumentException("Category is invalid");
             }
-            if (density <= 0.0)
+            if (density <= 0.0 || !Regex.IsMatch(density.ToString(), @"^\d{1,2}(\.\d{1,3}){0,1}$"))
             {
-                throw new ArgumentException("Density must be greater than 0");
+                throw new ArgumentException("Density is invalid");
             }
-            
+
             // Try and add the ingredient as new
             bool newIngredient = IngredientList.TryAdd(
                 nameToKey(name),
