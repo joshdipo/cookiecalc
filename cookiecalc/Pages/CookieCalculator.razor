@@ -1,4 +1,5 @@
 @page "/cookiecalc"
+@using System.Text.RegularExpressions
 @using cookiecalc.MyMCookie
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Sections
@@ -25,14 +26,17 @@
         <strong>DEBUG:</strong> @debugMessage
     </MudAlert>
 </SectionContent>
+@code{
+    private string debugMessage = "";
+}
 
 <!-- Tabs -->
 <SectionContent SectionName="tabs">
     <MudTabs Outlined="true" Elevation="0" Rounded="true" Border="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6">
-        <MudTabPanel Text="Ingredients">
+        <MudTabPanel Text="Ingredients" Icon="@Icons.Material.Rounded.List">
             <SectionOutlet SectionName="ingredients-tab" />
         </MudTabPanel>
-        <MudTabPanel Text="Recipes" Icon="Icons.Material.Filled.MenuBook">
+        <MudTabPanel Text="Recipes" Icon="@Icons.Material.Rounded.MenuBook">
             <SectionOutlet SectionName="recipes-tab" />
         </MudTabPanel>
     </MudTabs>
@@ -50,68 +54,56 @@
             <!-- Add ingredient form will go here -->
             <MudGrid Spacing="1" Class="align-center">
                 <MudItem xs="12" sm="4" md="3">
-                    <MudTextField Immediate="true" @bind-Value="textBoxName" Label="Name" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField Immediate="true" @bind-Value="textBoxName" Mask="@maskString" Label="Name" Variant="Variant.Outlined"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" sm="4" md="3">
-                    <MudTextField Immediate="true" @bind-Value="textBoxCategory" Label="Category" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField Immediate="true" @bind-Value="textBoxCategory" Mask="@maskString" Label="Category" Variant="Variant.Outlined"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" sm="4" md="3">
-                    <MudTextField Immediate="true" @bind-Value="textBoxDensity" Label="Density" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField Immediate="true" @bind-Value="textBoxDensity" Mask="@maskDouble" Label="Density" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="grams"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" sm="12" md="3">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ButtonAddIngredient">Add</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large" OnClick="ButtonAddIngredient">Add</MudButton>
                 </MudItem>
-                @if (!string.IsNullOrEmpty(textBoxMessage))
+                @if (!string.IsNullOrEmpty(textIngredientsListMessage))
                 {
                 <MudItem xs="12">
-                    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">@textBoxMessage</MudAlert>
+                    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">@textIngredientsListMessage</MudAlert>
                 </MudItem>
                 }
             </MudGrid>
             <!-- Ingredient list -->
             <MudTable Items="@Ingredients.IngredientList.Values"  Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" SortLabel="Sort By">
+                <ColGroup>
+                    <col style="width: 30%;" />
+                    <col style="width: 30%;" />
+                    <col style="width: 25%;" />
+                    <col style="width: 15%;" />
+                </ColGroup>
                 <HeaderContent>
                     <MudTh><MudTableSortLabel SortBy="new Func<Ingredient, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
                     <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<Ingredient, object>(x=>x.Category)">Category</MudTableSortLabel></MudTh>
-                    <MudTh><MudTableSortLabel SortBy="new Func<Ingredient, object>(x=>x.Density)">Density</MudTableSortLabel></MudTh>
-                    <MudTh>Remove</MudTh>
+                    <MudTh><MudTableSortLabel SortBy="new Func<Ingredient, object>(x=>x.Density)">Density (grams per ml)</MudTableSortLabel></MudTh>
+                    <MudTh Class="d-flex justify-center">Remove</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Name">@context.Name</MudTd>
                     <MudTd DataLabel="Category">@context.Category</MudTd>
                     <MudTd DataLabel="Density">@context.Density</MudTd>
-                    <MudTd DataLabel="Remove"><MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" @onclick="@(e => ButtonRemoveIngredient(context.Name))" /></MudTd>
+                    <MudTd DataLabel="Remove" Class="d-flex justify-center"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" aria-label="delete" @onclick="@(e => ButtonRemoveIngredient(context.Name))" /></MudTd>
                 </RowTemplate>
             </MudTable>
         </MudStack>
     </MudPaper>
 </SectionContent>
-
-<!-- Recipe Panel -->
-<SectionContent SectionName="recipes-tab">
-    <MudPaper Class="pa-4" Outlined="true" Elevation="0">
-        <MudStack Spacing="2">
-            <div>
-                <h3>Your Recipes</h3>
-                <p class="text-muted">View and manage your saved recipes.</p>
-            </div>
-            <!-- Recipe list will go here -->
-        </MudStack>
-    </MudPaper>
-</SectionContent>
-
 @code {
-    private string debugMessage = "";
+    public string textBoxName { get; set; } = "";
+    public string textBoxCategory { get; set; } = "";
+    public double textBoxDensity { get; set; }
+    private string textIngredientsListMessage = "";
 
-    // Cookie calc vars
-    private string textBoxName { get; set; } = "";
-    private string textBoxCategory { get; set; } = "";
-    private double textBoxDensity { get; set; }
-    private string textBoxMessage = "";
-
-
-
-    // Functions
+    public IMask maskString = new RegexMask(@"^[\w\s]+$");
+    public IMask maskDouble = new RegexMask(@"^[\d\.]+$");
 
     // Add Ingredient Button
     public void ButtonAddIngredient()
@@ -123,10 +115,10 @@
                 density:textBoxDensity
             );
             debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
-            textBoxMessage = "";
+            textIngredientsListMessage = "";
         }
         catch (Exception e){
-            textBoxMessage = $"Cannot add ingredient to list: {e.Message}";
+            textIngredientsListMessage = $"Cannot add ingredient to list: {e.Message}";
         }
     }
 
@@ -136,10 +128,37 @@
         try{
             Ingredients.RemoveIngredient(name);
             debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
-            textBoxMessage = "";
+            textIngredientsListMessage = "";
         }
         catch (Exception e){
-            textBoxMessage = $"Cannot remove ingredient from list: {e.Message}";
+            textIngredientsListMessage = $"Cannot remove ingredient from list: {e.Message}";
         }
     }
+
+    // Check if any recipe contains an ingredient
+    public bool IngredientInUse(string name){
+        return true;
+    }
+}
+
+
+<!-- Recipe Panel -->
+<SectionContent SectionName="recipes-tab">
+    <MudPaper Class="pa-4" Outlined="true" Elevation="0">
+        <MudStack Spacing="4">
+            <div>
+                <h3>Your Recipes</h3>
+                <p class="text-muted">View and manage your saved recipes.</p>
+            </div>
+            <!-- Recipe list will go here -->
+        </MudStack>
+    </MudPaper>
+</SectionContent>
+@code{
+    // Recipe basics vars
+    string textBoxRecipeName = "";
+    string textBoxRecipeDescription ="";
+
+    // Recipe ingredient vars
+    object dropDownUnit = MetricWeightUnit.Gram;
 }
