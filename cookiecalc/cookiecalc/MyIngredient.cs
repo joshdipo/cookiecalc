@@ -41,6 +41,24 @@ namespace cookiecalc.MyMCookie
         /// </summary>
         public static void AddIngrdient(string name, string category, double density)
         {
+            // Prevent invalid inputs
+            if (IngredientList.ContainsKey(nameToKey(name)))
+            {
+                throw new ArgumentException("Ingredient already exists");
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Name cannot be empty");
+            }
+            if (string.IsNullOrEmpty(category))
+            {
+                throw new ArgumentException("Category cannot be empty");
+            }
+            if (density <= 0.0)
+            {
+                throw new ArgumentException("Density must be greater than 0");
+            }
+            
             IngredientList.Add(
                 nameToKey(name),
                 new Ingredient(name, category, density)
@@ -49,6 +67,20 @@ namespace cookiecalc.MyMCookie
 
         public static void SetIngredient(string name, string category, double density)
         {
+            // Prevent invalid inputs
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Name cannot be empty");
+            }
+            if (string.IsNullOrEmpty(category))
+            {
+                throw new ArgumentException("Category cannot be empty");
+            }
+            if (density <= 0.0)
+            {
+                throw new ArgumentException("Density must be greater than 0");
+            }
+            
             // Try and add the ingredient as new
             bool newIngredient = IngredientList.TryAdd(
                 nameToKey(name),

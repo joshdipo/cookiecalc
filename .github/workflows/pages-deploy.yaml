@@ -1,5 +1,5 @@
 name: GitHub Pages Deploy
-run-name: Pages Deploy ${{ github.ref_name }}
+run-name: GitHub Pages Deploy // ${{ github.ref_name }}
 
 on:
   schedule:

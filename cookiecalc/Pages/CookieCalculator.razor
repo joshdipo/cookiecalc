@@ -61,6 +61,12 @@
                 <MudItem xs="12" sm="12" md="3">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="ButtonAddIngredient">Add</MudButton>
                 </MudItem>
+                @if (!string.IsNullOrEmpty(textBoxMessage))
+                {
+                <MudItem xs="12">
+                    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">@textBoxMessage</MudAlert>
+                </MudItem>
+                }
             </MudGrid>
             <!-- Ingredient list -->
             <MudTable Items="@Ingredients.IngredientList.Values"  Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" SortLabel="Sort By">
@@ -101,8 +107,7 @@
     private string textBoxName { get; set; } = "";
     private string textBoxCategory { get; set; } = "";
     private double textBoxDensity { get; set; }
-
-    @* private string selectedIngredient = ""; *@
+    private string textBoxMessage = "";
 
 
 
@@ -111,24 +116,30 @@
     // Add Ingredient Button
     public void ButtonAddIngredient()
     {
-        if (!string.IsNullOrEmpty(textBoxName) && !string.IsNullOrEmpty(textBoxCategory))
-        {}
         try{
-        Ingredients.AddIngrdient(
-            name:textBoxName,
-            category:textBoxCategory,
-            density:0.0
-        );
-        debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
+            Ingredients.SetIngredient(
+                name:textBoxName,
+                category:textBoxCategory,
+                density:textBoxDensity
+            );
+            debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
+            textBoxMessage = "";
         }
-        catch{
+        catch (Exception e){
+            textBoxMessage = $"Cannot add ingredient to list: {e.Message}";
         }
     }
 
     // Remove Ingredient Button
     public void ButtonRemoveIngredient(string name)
     {
-        Ingredients.RemoveIngredient(name);
-        debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
+        try{
+            Ingredients.RemoveIngredient(name);
+            debugMessage = $"Ingredients list has {Ingredients.IngredientList.Count} items";
+            textBoxMessage = "";
+        }
+        catch (Exception e){
+            textBoxMessage = $"Cannot remove ingredient from list: {e.Message}";
+        }
     }
 }
